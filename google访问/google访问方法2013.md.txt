@@ -1,3 +1,6 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
 ##不翻墙正常使用google的简单方法##
 * http://www.diguage.com/archives/4.html	墙外“谷妹”，墙里佳人“上”
 >
@@ -11,3 +14,16 @@
 	* 打不开,hosts问题,[smart hosts](https://smarthosts.googlecode.com/svn/trunk/hosts)
 	* 关键词，chrome扩展[HTTPS Everywhere](https://chrome.google.com/webstore/detail/https-everywhere/gcbommkclmclpchllfjekcdonpmejbdp?utm_source=chrome-ntp-icon)
 	* 链接打不开，chrome扩展[Remove Google Redirects](https://chrome.google.com/webstore/detail/remove-google-redirects/ccenmflbeofaceccfhhggbagkblihpoh?utm_source=chrome-ntp-icon)
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGP Desktop 10.1.1 (Build 10)
+Charset: utf-8
+
+wsBVAwUBUoA9TAUHQndzGWb7AQjuygf+Pacjt44jwyBELVQZUodPY80NJ/7v+c0y
+jODSJ2MsYqKikhQGE6mtEZSwDf+4dlS63kyRuueVPyxcUGqnxyIduNRy5Vxt3Uz7
+jrNAF9mn96X17r3e2RjBjtC+2t7xnFT5iHjV2vemwTG0iACpjjlaUkqxvLlat263
+53l8l01xnYYSbz/MgzVS+8juVgg4WjolMIWsr1BV2utWEgnF7rK5Bo86fxuxpqqh
+/Z9neMqPYJ7LGtrGEd8xoYCBSrRv0xA7cBBq83LmOCuReOru6HqVbBD5KBLaKUbK
+nGCk8mWX7Bm5bzHfdleAtdmbgKfPSNsrlIyyFMWYrZwPFXek5yZ4Rg==
+=tTvv
+-----END PGP SIGNATURE-----
