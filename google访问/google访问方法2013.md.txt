@@ -1,13 +1,13 @@
-##²»·­Ç½Õı³£Ê¹ÓÃgoogleµÄ¼òµ¥·½·¨##
-* http://www.diguage.com/archives/4.html	Ç½Íâ¡°¹ÈÃÃ¡±£¬Ç½Àï¼ÑÈË¡°ÉÏ¡±
+##ä¸ç¿»å¢™æ­£å¸¸ä½¿ç”¨googleçš„ç®€å•æ–¹æ³•##
+* http://www.diguage.com/archives/4.html	å¢™å¤–â€œè°·å¦¹â€ï¼Œå¢™é‡Œä½³äººâ€œä¸Šâ€
 >
-ÒòÎª¹úÄÚÌØÊâµÄÍøÂçÔ­Òò£¬ÉÏGoogle¾­³£ÓĞÁ´½Ó±»ÖØÖÃµÈÎÊÌâ¡£ËùÒÔ£¬¸ÃÆªÎÄÕÂÀï»¹ÌáÁËÒ»ÏÂ·­Ç½ÉÏGoogle¡£²»¹ı£¬D¹Ï¸ç¸öÈË¸Ğ¾õ£¬·­Ç½ÉÏGoogleÓĞµãÌ«Âé·³ÁË¡£Ò»°ãÈË£¬¿ÉÄÜÕÛÌÚ²»ÆğÀ´¡£ÁíÍâ£¬´ÓD¹Ï¸çµÄ¸öÈËÊ¹ÓÃ¾­ÑéÀ´Ëµ£¬Ê¹ÓÃÒ»Ğ©¼òµ¥µÄ¼¼ÊõÊÖ¶Î£¬Ò²¿ÉÒÔ´ïµ½ÔÚ²»·­Ç½µÄÇé¿öÏÂ£¬Ë³ÀûÊ¹ÓÃGoogleµÄÄ¿±ê¡£
-* Ò»°ãÊ¹ÓÃGoogle¹ı³ÌÖĞ£¬ÓĞ³öÏÖÈı¸öÎÊÌâ£º
-	* GoogleµÄÍøÕ¾´ò²»¿ª£¡ÕâÊÂ×îÑÏÖØµÄÇé¿ö¡£µ±È»£¬Ò»°ãÇé¿öÏÂ·ÃÎÊgoogle.com.hkÊÇÃ»ÓĞÎÊÌâµÄ£»
-	* ËÑË÷Ä³Ğ©¹Ø£¦¼ü£¦´Ê»áÖ±½Ó¡°¶ÏÍø¡±£»
-	* ËÑË÷³öÀ´µÄÍøÒ³Á´½Ó´ò²»¿ª£»
-* ÏÂÃæ£¬D¹Ï¸ç¾Í·Ö±ğÀ´½â¾öÕâÈı¸öÎÊÌâ£¡
-* ¼òµ¥µÄÀ´ËµÈı¸ö·½·¨
-	* ´ò²»¿ª,hostsÎÊÌâ,[smart hosts](https://smarthosts.googlecode.com/svn/trunk/hosts)
-	* ¹Ø¼ü´Ê£¬chromeÀ©Õ¹[HTTPS Everywhere](https://chrome.google.com/webstore/detail/https-everywhere/gcbommkclmclpchllfjekcdonpmejbdp?utm_source=chrome-ntp-icon)
-	* Á´½Ó´ò²»¿ª£¬chromeÀ©Õ¹[Remove Google Redirects](https://chrome.google.com/webstore/detail/remove-google-redirects/ccenmflbeofaceccfhhggbagkblihpoh?utm_source=chrome-ntp-icon)
+å› ä¸ºå›½å†…ç‰¹æ®Šçš„ç½‘ç»œåŸå› ï¼Œä¸ŠGoogleç»å¸¸æœ‰é“¾æ¥è¢«é‡ç½®ç­‰é—®é¢˜ã€‚æ‰€ä»¥ï¼Œè¯¥ç¯‡æ–‡ç« é‡Œè¿˜æäº†ä¸€ä¸‹ç¿»å¢™ä¸ŠGoogleã€‚ä¸è¿‡ï¼ŒDç“œå“¥ä¸ªäººæ„Ÿè§‰ï¼Œç¿»å¢™ä¸ŠGoogleæœ‰ç‚¹å¤ªéº»çƒ¦äº†ã€‚ä¸€èˆ¬äººï¼Œå¯èƒ½æŠ˜è…¾ä¸èµ·æ¥ã€‚å¦å¤–ï¼Œä»Dç“œå“¥çš„ä¸ªäººä½¿ç”¨ç»éªŒæ¥è¯´ï¼Œä½¿ç”¨ä¸€äº›ç®€å•çš„æŠ€æœ¯æ‰‹æ®µï¼Œä¹Ÿå¯ä»¥è¾¾åˆ°åœ¨ä¸ç¿»å¢™çš„æƒ…å†µä¸‹ï¼Œé¡ºåˆ©ä½¿ç”¨Googleçš„ç›®æ ‡ã€‚
+* ä¸€èˆ¬ä½¿ç”¨Googleè¿‡ç¨‹ä¸­ï¼Œæœ‰å‡ºç°ä¸‰ä¸ªé—®é¢˜ï¼š
+	* Googleçš„ç½‘ç«™æ‰“ä¸å¼€ï¼è¿™äº‹æœ€ä¸¥é‡çš„æƒ…å†µã€‚å½“ç„¶ï¼Œä¸€èˆ¬æƒ…å†µä¸‹è®¿é—®google.com.hkæ˜¯æ²¡æœ‰é—®é¢˜çš„ï¼›
+	* æœç´¢æŸäº›å…³ï¼†é”®ï¼†è¯ä¼šç›´æ¥â€œæ–­ç½‘â€ï¼›
+	* æœç´¢å‡ºæ¥çš„ç½‘é¡µé“¾æ¥æ‰“ä¸å¼€ï¼›
+* ä¸‹é¢ï¼ŒDç“œå“¥å°±åˆ†åˆ«æ¥è§£å†³è¿™ä¸‰ä¸ªé—®é¢˜ï¼
+* ç®€å•çš„æ¥è¯´ä¸‰ä¸ªæ–¹æ³•
+	* æ‰“ä¸å¼€,hostsé—®é¢˜,[smart hosts](https://smarthosts.googlecode.com/svn/trunk/hosts)
+	* å…³é”®è¯ï¼Œchromeæ‰©å±•[HTTPS Everywhere](https://chrome.google.com/webstore/detail/https-everywhere/gcbommkclmclpchllfjekcdonpmejbdp?utm_source=chrome-ntp-icon)
+	* é“¾æ¥æ‰“ä¸å¼€ï¼Œchromeæ‰©å±•[Remove Google Redirects](https://chrome.google.com/webstore/detail/remove-google-redirects/ccenmflbeofaceccfhhggbagkblihpoh?utm_source=chrome-ntp-icon)
