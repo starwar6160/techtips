@@ -3,7 +3,8 @@ techtips
 
 我的一些技术学习研究备忘录，20131108启用。
 
-我的PGP Public Key:
+##我的PGP Public Key:##
+
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: PGP Desktop 10.1.1 (Build 10)
 
