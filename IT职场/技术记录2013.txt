@@ -1,0 +1,38 @@
+2013/11/22 11:42:28 [星期五] 我在http://forum.allaboutcircuits.com/showthread.php?t=81068看到说：
+I am working on with an arm cortex m3 with a 120mhz clock and 64k of ram. It is plenty to run cpp.
+Arduino is an interesting example. The original arduino probably should not be running cpp, but the cortex m3 version should be able to.
+http://toddbot.blogspot.com/2009/06/c-on-arm-cortex-m3.html
+2013/11/22 11:49:02 [星期五] 
+Anonymous said...
+I'm starting with the STM32, and using C++ with it. Before I was using C++ with an ARM7 (LPC2000 series). Microcontrollers with >= 256KB of flash and > 32 KB of RAM support nearly all features(特色) of C++, including exceptions(例外) and vector(矢量), list, string... iostream is another matter, it pulls in code for locale(场所) support and makes the binary(二进制的) file too big, but who needs iostream in an embedded(嵌入式的) device(装置) anyway?
+The big problem with the STM32 is that Cortex-M3 seems to be standardizing(标准化) startup an peripherals(周边设备) into libraries (CMSIS), and these libraries are designed for C developers and not C++ friendly...
+2013/11/22 11:49:33 [星期五] 
+ewout+keyword+googlemap.6f7d61 said...
+I use C++ on the TI Stellaris LM3S9B96 (Cortex-M3 core) with success.The only C++ features I stay clear of are templates(模板), RTTI, the std library and exception handling. Classes and polymorphism(多态性) are concepts(观念) that enable me to write efficient(有效率的) device drivers etc on these microcontrolllers. 
+I do not understand developers who write code for these devices in C when their code size exceeds(超过) 32K in flash. Scalability(可扩展性), type checking and code re-usability are very limited or non-existing in C and for programs that use 32K or more flash, C++ offers the right toolset(工具箱) to write coherent(连贯的) and (mostly) bug-free(没缺点) code. The price you pay is having to learn C++ and developing an "Object-Oriented" mindset(心态). In my perception(知觉), this is a small price to pay for writing better embedded software with fewer bugs and more functionality(功能).
+7:17 AM
+2013/11/22 11:51:37 [星期五] 
+I used to blog but one day I realized I don't like people and writing down thoughts was just a form of talking with myself portrayed(描绘) in someone else, basically(主要地) what I do when I divagate(离题) in my nonsense(废话) said...
+Hello, I have 7 years doing C code for MCU, mostly because I was asked to do so (even though last time it was for a Cortex M3 - iMX53). Then I was told C++ produced bigger code and it was not optimal(最佳的) (and I partially(部分地) believed since ASM code can produce more efficient instructions than C, or I think so).
+
+Now I am in another company and I'm about to use the same Cortex M3 -STM32-. Even though I'm not a CPP versed(精通的) coder I think OOP is way powerful than structured(有结构的) programming.
+
+Anyway, my question is: CPP code has any disadvantage against C? I mean, regarding processing time, memory, etc?
+1:56 PM
+2013/11/22 11:53:06 [星期五] 
+Todd Coram said...
+Generally, an object instantiation(实例化) of an empty class takes 1 byte (under IAR at least). Objects aren't expensive, the heap is. You'll need to stay away from 'new' and 'delete'.
+
+What you get with C++ is more type checking, and lots more compiler(编译器) help. In particular, inlining functions gives the compiler help on deciding what to generate(形成) (sometimes inline(内联的), sometimes a function call). 
+In theory, C++ can produce tighter code than C. At least from an optimizer's perspective(观点).
+
+Most of the C++ I've done for embedded(栽种) revolved(旋转) around using classes for information grouping/hiding; templates(模板) for code generation and inlining for optimization(最佳化).
+
+If you don't use the heap or RTTI features(特色) of C++, you have a richer C and the code generation should not be any larger than C (good optimizing(最优化) compilers notice that you aren't using exceptions(例外) or the heap and don't generate "extra" code).
+
+To answer your question more directly: It depends. Given a good compiler, the compiles should still be fast and the code small and fast too.
+2:39 PM
+2013/11/22 13:58:16 [星期五] http://coolshell.cn/articles/8088.html	对技术的态度 | 酷壳 - CoolShell.cn 
+我在“软件开发‘三重门’ ”里说过，第一重门是业务功能，在这重门里，的确是会编程就可以了；第二重门是业务性能，在这一重门里，技术的基础就很管用了，比如：操作系统的文件管理，进程调度，内存管理，网络的七层模型，TCP/UCPUDP的协议，语言用法、编译和类库的实现，数据结构，算法等等就非常关键了；第三重门是业务智能，在这一重门里，你会发现很多东西都很学院派了，比如，搜索算法，推荐算法，预测，统计，机器学习，图像识别，分布式架构和算法，等等，你需要读很多计算机学院派的论文。
+2013/11/22 14:08:39 [星期五] 
+C++的坑真的不多，如果你能花两到三周的时候读一下《Effecitve C++ 》里的那50多个条款，你就知道C++里的坑并不多，而且，有很多条款告诉我们C++是怎么解决C的坑的。然后，你可以读读《Exceptional C++ 》和《More Exceptional C++ 》，你可以了解一下C++各种问题的解决方法和一些常见的经典错误。
