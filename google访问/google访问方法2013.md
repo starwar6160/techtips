@@ -1,4 +1,4 @@
------BEGIN PGP SIGNED MESSAGE-----
+﻿-----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256
 
 ##不翻墙正常使用google的简单方法##
