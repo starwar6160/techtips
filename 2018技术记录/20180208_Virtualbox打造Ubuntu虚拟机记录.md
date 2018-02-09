@@ -18,7 +18,13 @@
     *   现在可以登录到公网机器后ssh -p 10022 homeserver_user@localhost连接内网机器；
     * 上述方法要登录外网服务器，然后再次登录内网服务器；更好的方法是直接让外网服务器中继转发，命令如下：
         *   ssh -fN -R work2:41722:localhost:22 root@work2，但是目前尚未成功，错误消息如下Warning: remote port forwarding failed for listen port 22，所以暂且搁置；不过两次登录的做法也更安全一些；
-    *   这个方法要求稳定，所以还要加上AutoSSH来保持稳定连接；命令如下,这样就可以保持稳定连接了，这里-M后面的端口号无所谓，是一个监视端口，只要是公网机器上一个未用端口就可以了：
+        *   直接登录的解决方案参考http://arondight.me/2016/02/17/%E4%BD%BF%E7%94%A8SSH%E5%8F%8D%E5%90%91%E9%9A%A7%E9%81%93%E8%BF%9B%E8%A1%8C%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/
+        命令如下：
+        ssh -p 22 -fN -R 10022:localhost:22 root@work2 -i ~/.ssh/gw724.pem
+        这条autossh不但维持连接，而且让外网机器可以直接通过10022端口转发到ssh反向隧道另一端的内网机器
+        autossh -p 22 -M 10900 -NR *:10022:localhost:22 root@work2 -i ~/.ssh/gw724.pem -f
+        完毕以后外网通过ssh -p 10022 priUser@work2就可以直接ssh登录内网机器了，priUser是内网机器的用户名；
+    *   这个方法要求SSH连接稳定，所以还要加上AutoSSH来保持稳定连接；命令如下,这样就可以保持稳定连接了，这里-M后面的端口号无所谓，是一个监视端口，只要是公网机器上一个未用端口就可以了：
     autossh -M 10900 -fN -o "PubkeyAuthentication=yes" -o "StrictHostKeyChecking=false" -o "PasswordAuthentication=no" -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -R 1.1.1.1:10022:localhost:22 relayserver_user@1.1.1.1
     *   然后把autossh添加到/etc/rc.local，保持系统重启时也会执行该命令；
 *   总结：内网服务器上建立到公网服务器的反向隧道，同时内网服务器还执行一个autossh保持这个隧道的稳定性，就可以从外网登录公网服务器后将其作为跳板机登录内网服务器了；
