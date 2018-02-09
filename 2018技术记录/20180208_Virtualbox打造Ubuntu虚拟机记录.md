@@ -14,3 +14,9 @@ Virutualbox打造自己使用的Linux虚拟机
   elasticsearch,redis,nginx,rabbitmq,
   jetty, zookeeper,thrift,
   jenkins,drupal，joomla, redmine,
+  * 设置SSH反向隧道，使得在外面也可以访问处于NAT后面，内网里面的虚拟机，同时使用AutoSSH保持SSH的稳定连接；做法参考https://linux.cn/article-5975-1.html，具体操作如下：
+    *   在内网服务器上ssh -fN -R 41722:localhost:22 root@work2 -i ~/.ssh/vps.pem ,含义是把公网服务器41722端口的流量转发到本机的22端口,-i指定使用哪个公钥登录公网 服务器；root@work2是公网服务器的用户名和域名；请把公网机器的域名，私钥事先准备好，在hosts文件和~/.ssh目录；
+    *   现在可以登录到公网机器后ssh -p 10022 homeserver_user@localhost连接内网机器；
+    * 上述方法要登录外网服务器，然后再次登录内网服务器；更好的方法是直接让外网服务器中继转发，命令如下：
+        *   ssh -fN -R work2:41722:localhost:22 root@work2，但是目前尚未成功，错误消息如下Warning: remote port forwarding failed for listen port 22，所以暂且搁置；不过两次登录的做法也更安全一些；
+    *   这个方法要求稳定，所以还要加上AutoSSH来保持稳定连接；
