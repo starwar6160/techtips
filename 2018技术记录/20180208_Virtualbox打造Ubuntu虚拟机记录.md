@@ -13,4 +13,38 @@
   elasticsearch,redis,nginx,rabbitmq,
   jetty, zookeeper,thrift,
   jenkins,drupal，joomla, redmine,
+  第一批:
+  docker pull alpine
+  docker pull ubuntu
+  docker pull redis
+  docker pull node
+  docker pull mongo
+  docker pull postgres
+  docker pull gogs/gogs
+  docker pull golang
+  docker pull haskell
+  docker pull ruby
+  docker pull elasticsearch
+  docker pull nginx
+  docker pull drupal
+  docker pull redmine
+  docker pull joomla
+  docker pull jenkins
+  第二批:
+  docker pull python
+  docker pull pypy
+  docker pull django
+  docker pull rabbitmq
+  docker pull java
+  docker pull r-base
+  docker pull rust  
+  docker pull pypy
+  docker pull gcc
+  docker pull perl
+  docker pull jruby
+  docker pull swift
+  docker pull julia
+  docker pull jetty
+  docker pull zookeeper
+  docker pull thrift
   * 设置SSH反向隧道，方便从外网访问该服务器，具体步骤参见另一篇文章；此外，内网服务器也可以是Windows的，使用cygwin里面的ssh,autossh，可以达到同样的稳定隧道效果，用于把windows的诸如3389等端口选择性的开放出来；
