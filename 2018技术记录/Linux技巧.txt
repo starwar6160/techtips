@@ -1,0 +1,39 @@
+2018-07-24 20:18 SSH登录问题调试
+/usr/sbin/sshd -p 2222 -d
+      -d     以调试模式运行。服务器将在前台运行并发送非常详细的调试日志信息，
+             服务器将只允许接入一个连接，并且不派生出子进程。仅用于调试目的。
+             使用多个 -d 选项可以输出更详细的调试信息(最多3个)。
+我又遇到新建服务器无法ssh的情况。。不过这次是建立服务器过程中选择的sshkey起作用，但是只能作用于root账号。我新建的dev账号，我手工建立目录，放公钥，无效，权限看了也看不出问题。后来我以dev用户自己的身份ssh-keygen生成了默认钥匙，然后手工添加authorized_keys文件并设置权限600，这次好了。看来还是手工添加的配置问题；
+
+2018-07-26 13:32 添加一个普通用户能执行sudo并且sudo免密码的方法
+vi /etc/sudoers
+把其中的相关段改为如下，假设普通用户的用户名是dev,这里重点是增加了普通用户和用户组都免密码，在一般个人机器上问题不大，其实我觉得哪怕是生产服务器，sudo前缀也足够提示你谨慎执行命令了：
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+dev ALL=(ALL:NOPASSWD) ALL
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+dev ALL=(ALL) NOPASSWD: ALL
+
+2018-07-26 13:53 ubuntu 16.04给docker设置代理服务器：
+mkdir /etc/systemd/system/docker.service.d
+vi /etc/systemd/system/docker.service.d/http-proxy.conf
+内容：
+[Service]
+Environment="HTTP_PROXY=http://localhost:1429"
+还有其他不需要代理服务器的注册表的话添加一条：
+Environment="NO_PROXY=localhost,127.0.0.0/8,docker-registry.somecorporation.com"
+Flush 配置改变：systemctl daemon-reload
+验证配置relaod了：systemctl show docker | grep 1429
+重启docker服务：systemctl restart docker
+然后就会使用新设置的代理了。
+
+2018-07-27 20:45 ubuntu重置密码
+开机进入grub菜单，选择Advanced options for Ubuntu
+选择进入带最新的内核版本的Ubuntu（recovery mod）。recovery模式是用来在你无法进入系统时恢复系统或者执行其它诸如重置密码或升级系统的工作的。
+选择root选项进入超级用户模式。
+在此，你只有只读权限。为了能够运行管理员命令，必须重新挂载这个shell窗口，赋予读写权限。输入命令：
+mount -rw -o remount /
+现在你可以运行一小部分命令了，包括更改密码的命令：
+sudo passwd username
+至此，密码更改完成，重启电脑即可。

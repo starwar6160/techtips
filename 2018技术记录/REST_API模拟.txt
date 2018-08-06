@@ -1,0 +1,25 @@
+2018-07-27 17:18 以下方式做模拟REST API，mock数据用途非常好用；看了该项目的说明确实就是专门设计做这个用途的：Get a full fake REST API with zero coding in less than 30 seconds (seriously)
+还可以利用代码动态创建数据；
+三步使用 JSON Server 模拟 API
+https://blog.csdn.net/u011537073/article/details/73148642
+npm install -g json-server
+创建 db.json
+找个你喜欢的目录，创建 db.json，里面包含你需要的数据模型
+{
+  "posts": [
+    { "id": 1, "title": "json-server", "author": "typicode" }
+  ],
+  "comments": [
+    { "id": 1, "body": "some comment", "postId": 1 }
+  ],
+  "profile": { "name": "typicode" }
+}
+随后，利用 json-server --watch db.json 来启动 Server
+测试
+启动起来之后，json-server 会根据你的 db.json 自动建立 RESTful API，以上面的 db.json 的 post 为例
+GET    /posts
+GET    /posts/1
+POST   /posts
+PUT    /posts/1
+PATCH  /posts/1
+DELETE /posts/1
