@@ -1,3 +1,284 @@
+2018-05-02 17:09 继续试验antd，我发现menu和route里面，更改页面的标题，path，路由需要一起更改.而具体的js文件名不用更改；
+
+2018-05-03 15:49 antd继续分析：
+测试页面test427.js，看到的部分对照源码：
+各品类占比：3个Pie组件；组件源码在src/components/Charts/Pie里面；
+antd底层是React，所以页面源码几乎都是js，而且组件化了。
+
+2018-05-04 11:32
+网站架构：src/common下的menu.js和router.js决定了网站架构；
+menu.js:const menuData内部是菜单结构，name给人看，path给机器看路由;
+router.js:const routerConfig内部是路由配置，每个路由路径都有一个具体的component对应，实现在省略.js扩展名的js代码里面；
+这两个文件里面的其他代码目前暂时看不明白，暂时不必理解；
+网站标题修改：
+左上角的标题Logo，在SiderMenu.js里面的如下段落里面，在这里我可以修改网站标题，这个文件内部主要就网站标题可见，还有不少代码可能是载入菜单的，暂时看不明白：
+<div className={styles.logo} key="logo">
+
+2018-05-07 10:58 我要入门antd，好好看看这里的文档，这里是详细的每个组件的用法文档：
+https://ant.design/docs/react/introduce-cn
+antd是antd-pro的基础，提供大量的组件，要自己开发，得要先了解这些组件怎么用；
+
+2018-05-07 16:00
+路由什么意思？
+      楼上都回答的挺好，原理和路由器原理相同，我就简单概述下：不同的请求地址会交给路由处理来转发给相应的控制器处理，所以说路由就可以在转发前修改转发地址，你可以在这上面大作文章。
+为什么要使用路由？
+      传统web开发是每一个请求地址都会请求服务器来进行处理，但是用户有些操作则无需请求服务器，直接页面端修改下逻辑就能达到目的，这种最好使用路由，也许题主会有疑问：直接使用js处理下不就行了。使用js直接处理这些是可以的，事实上以前我们也这么做，但是这样做不便于用户收藏当前页，因为使用js时并不更新url，但是使用路由时，url也是随着改变的，用户浏览到一个网页时可以直接复制或收藏当前页的url给别人，这种方式对于搜索引擎和用户来说都是友好的。
+发布于 2016-08-17
+
+2018-05-07 16:39 做一个网站需要哪些基础知识：
+刚开始做的时候，其实就是很基础的增删改查一套，做得过程中，发现需要做某个功能，做这个功能的时候再去学需要的知识，这样随着网站功能得一点点丰富，自己的知识，技能也成长了起来了。 和打游戏的道理一样一样，先整点简单的小副本，干点小BOSS，装等提升一些，技能熟练一些，多打几个小副本，到了进团队副本的时候，装等，技术也跟着就上来了嘛。
+
+2018-05-08 13:35 我看看下面这篇教程。。
+http://www.ruanyifeng.com/blog/2015/03/react.html
+开发工具：chrome最新版，RMBP；
+demo01:
+最简单的react入门demo，
+js库：
+HTML头部引用了react.js,react-dom.js,browser.min.js三个js库；实践中这3个库可以放在CDN，或者阿里云OSS外加CDN等等地方；
+加载这三个JS库花费时间分别为11/6/112ms;这是开发工具的Network标签计算出来的；
+其中，react.js 是 React 的核心库，react-dom.js 是提供与 DOM 相关的功能，Browser.js 的作用是将 JSX 语法转为 JavaScript 语法，这一步很消耗时间，实际上线的时候，应该将它放到服务器完成。
+Performance计算性能：我刷新7次网页平均最消耗时间的大头是Script，平均一次150ms;其他操作都在5-10ms不等，基本可以忽略；
+内存占用9.6M左右，这个最简单的React网页；其中大头是系统43%，array 19%,string 10%;
+开发者工具左上角第二个图标是设备模式，可以模拟常见设备上网页看起来大概是什么样子；
+Cmd-Opt-I打开Chrome开发者工具；
+实际网页代码是React的JSX语法，必须用<script type="text/babel">标记才能正确渲染；
+该脚本最后在chrome里面查看源代码时被渲染为一句以下代码，不过这个只有在开发者工具的Elements里面查看得到，简单的“查看源代码”是看不到这个的，是通过document.getElementById('example')把渲染结果插入实际的DOM节点的：
+<h1 data-reactroot="">Hello, world! 1345 </h1>
+demo02:
+整体和demo01差不多，主要是从一个JS数组里面的数据生成了3行HTML。
+不明白的地方：document.getElementById('example')的含义是：将render里面的生成完毕的HTML代码插入某个dom节点example；本来在标准的HTML里面该函数是获取该DOM节点的引用，但是用在React的JSX语法里面似乎就成了将Render结果插入该DOM节点，这中间可能有些新手还不知道的东西还没能理解的；
+names map function的含义；
+map是一个JS函数，返回经过函数处理的数组；
+key:
+该语句返回的<div key={index}>Hello, {name}!</div>里面的key不是给开发者用的，而是给React框架内部使用的；
+key的值是组件的唯一身份标识.key属性的使用场景最多的还是由数组动态创建的子组件的情况.
+key的值是一个永久且唯一的值.
+key属性是添加到自定义的子组件上，而不是子组件内部的顶层的组件上。
+key值的唯一是有范围的，即在数组生成的同级同类型的组件上要保持唯一，而不是所有组件的key都要保持唯一.
+以下两行js代码验证了index是js的数组在使用时的隐含可用元素，没有定义就可用的元素；
+var names = ['Alice', 'Emily', 'Kate'];
+var n2=names.map(function (name, index) {return index;})
+那么demo02的整体含义就是，定义了一个名字数组names，然后该数组的map方法返回一个经过函数映射后的数组，映射函数使用数组元素值和索引作为输入，HTML代码作为输出，生成了3行对应名字的HTML代码；
+映射函数中，形参名字无所谓，位置决定了用途，第一个是元素值，第二个是元素索引或者说下标；
+index作为key是一种反模式
+在list数组中，用key来标识数组创建子组件时，若数组的内容只是作为纯展示，而不涉及到数组的动态变更，其实是可以使用index作为key的。
+但是，若涉及到数组的动态变更，例如数组新增元素、删除元素或者重新排序等，这时index作为key会导致展示错误的数据。本文开始引入的例子就是最好的证明。
+最佳方法，使用一个本地变量循环加1，作为局部唯一而且不重复的key；
+
+2018-05-09 10:56
+继续研究React入门Demo：
+demo03:
+内容替换为，JSX语法的一个var arr=[];内部直接有2行HTML代码作为数组的2个元素，后面的ReactDOM.render内部，<div>{arr}</div>的方式，就把数组扩展开来；数组形式如下，第三行是我自己添加的，也有效：
+var arr = [
+  <h3 key="1">Hello world!</h3>,
+  <h1 key="2">React is awesome</h1>,
+    'test Line3'
+];
+JSX就是能混合使用JavaScript和HTML两种语言语法的一个语法，方便使用的，最后都会babel被转化为es5代码以便达到最大的浏览器兼容性；JSX 的基本语法规则：遇到 HTML 标签（以 < 开头），就用 HTML 规则解析；遇到代码块（以 { 开头），就用 JavaScript 规则解析。
+
+2018-05-09 13:32
+https://lodash.com/
+Lodash:A modern JavaScript utility library delivering modularity, performance & extras.
+
+2018-05-09 15:15
+demo04:React组件基础：
+组件是js代码的封装，用React.createClass创建的JSX语法的特定形式的js类，可以如同标准HTML标签一样的被使用在网页中，当然也必须是使用在ReactDOM.render函数内部；
+var HelloMessage = React.createClass({
+  render: function() {
+    return <h1>Hello {this.props.name}</h1>;
+  }
+});
+ReactDOM.render(
+  <HelloMessage name="John" />,
+  document.getElementById('example')
+);
+通过<HelloMessage name="John" age="17"/>这样的方式传递参数，通过{this.props.name}这样的方式在组件内部使用传入的参数值；
+不过注意，JS类并不能和C++类等价，类静态成员等等东西是没有的，只是大概作用类似，语法类似；
+所有组件类都必须有自己的 render 方法，用于输出组件。
+注意，组件类的第一个字母必须大写，否则会报错，比如HelloMessage不能写成helloMessage。
+另外，组件类只能包含一个顶层标签，否则也会报错。
+组件的用法与原生的 HTML 标签完全一致，可以任意加入属性；
+组件的属性可以在组件类的 this.props 对象上获取，比如 name 属性就可以通过 this.props.name 读取。
+添加组件属性，有一个地方需要注意，就是 class 属性需要写成 className ，for 属性需要写成 htmlFor ，这是因为 class 和 for 是 JavaScript 的保留字。
+demo05:组件子节点：
+this.props 对象的属性与组件的属性一一对应，但是有一个例外，就是 this.props.children 属性。它表示组件的所有子节点；
+React 提供一个工具方法 React.Children 来处理 this.props.children 。我们可以用 React.Children.map 来遍历子节点，而不用担心 this.props.children 的数据类型是 undefined 还是 object。
+如下这一句，是组件内部用JSX语法写的，React.Children.map方法是一个工具方法，很好的处理了各种常见异常情况；注意此处函数有2个参数，第一个参数是this.props.children，第二个参数是一个简短的匿名函数，直接写在参数里面了，函数内部还直接写的HTML标签，这就是JSX语法；
+{React.Children.map(this.props.children, function (child) {return <li>{child}</li>;})}
+demo09:处理用户输入：
+此处注意，排版布局且不用说，基本可以交给CSS和框架，但是最基本的HTML输入元素的标签还是要会写的；
+此处组件里面的getInitialState这个函数是定死名字不能改的，但是返回的值可以是任何json数据，多复杂都可以，这里例子只用了一个简单的键值对，key的名字是可以任意取的；
+handleChange这个事件处理函数，接收输入元素改变事件，取得里面的最新值event.target.value，使用setState去更新本实例的状态数据，就是前面getInitialState返回的那个状态数据，所以此处注意key名字和前一个函数里面的key名字要对应起来；
+render:当state数据有更新时，就会触发重现渲染本组件，此处先读取状态数据，然后将其最新值填入JSX模版，并渲染成HTML后返回给浏览器；
+getInitialState 方法用于定义初始状态，也就是一个对象，这个对象可以通过 this.state 属性读取。当用户点击组件，导致状态变化，this.setState 方法就修改状态值，每次修改以后，自动调用 this.render 方法，再次渲染组件。
+由于 this.props 和 this.state 都用于描述组件的特性，可能会产生混淆。一个简单的区分方法是，this.props 表示那些一旦定义，就不再改变的特性，而 this.state 是会随着用户互动而产生变化的特性。
+
+2018-05-11 11:23 很奇怪，ajax访问例子里面的github的API没问题，访问我自己的REST API就会有跨域问题了；
+网上说浏览器扩展比如POSTMAN等不受跨域访问限制，而一般的http请求就有这个限制，待会看看怎么解决；
+
+2018-05-11 15:38
+https://api.github.com/users/octocat/gists
+https://api.github.com/users/octocat/gists
+http://web3:2217/quote?num1=111&num2=222&_=1526022785468
+目前github的API我用PostMan和浏览器js访问都正常，但是我自己的Falcon API却有跨域访问问题，但是奇怪的是，我用Postman访问正常，用浏览器的js访问就不正常，据说是如果服务器端添加一个header选项就可以，但是会有安全性问题，不过我先添加试试看吧，就如同防火墙规则先比较松，然后逐步收紧；
+工具：postman,curl,js/ajax
+地点：本机,阿里云,bwg
+交叉访问github和我自己的API，对比测试看看；
+
+2018-05-11 17:03 我暂时通过Falcon API里面临时添加falcon_cors包临时放开所有的跨域请求，临时解决了js/ajax访问时的跨域请求问题，不过仍有安全隐患，需要进一步研究；
+
+2018-05-11 17:09
+首先，楼主要清楚一个概念：“是谁阻止了跨域访问？”
+答案不是js，也不是web server，也不是服务端脚本。而是浏览器。
+每一段在浏览器运行的js，都有属于它的网址，网址当然就有域名。
+当url-1里面的js发起ajax请求url-2时，浏览器此时不会检查跨域，而是直接向url-2发起请求。
+当浏览器收到响应后，会判断url-2的域名是否和你ajax所在域名是否一致，如果不一致，浏览器会检查url-2的响应headers里面有没有声明允许跨域Access-Control-Allow-...，如果有且发起ajax的js所在域通过，那么会讲相应传递给js，否则在浏览器这里就阻断了。
+
+2018-05-11 17:21 我现在成功解析了我的Falcon API返回的数据，通过HTML里面的js/ajax，接下来添加详细注释，然后把相关技术点做个小结，记录下来；
+
+2018-05-15 10:51
+// 在react中发送ajax请求 现在我们用axios
+// axios封装了RESTFul 基于promise的 不支持jsonp 可用在服务端
+let { data } = await  axios.get('http://musicapi.leanapp.cn/search?keywords=name');
+
+2018-05-15 11:32 我能用基本的jquery发送ajax请求异步获取REST API的数据了，但是更好的axios包发送请求的方式还有问题，看看能否快速解决吧。
+
+2018-05-15 16:16 前端开发中的“面包屑”这个术语，指的是网站内部导航栏目，那些在主导航栏下面，让你知道自己处于网站的哪一个部分的小型导航栏，行话称之为面包屑；
+
+2018-05-16 10:12 关于我家那个树莓派上面我的REST API延迟很高的问题，今天我才发现问题所在，是该机我设定的http_proxy环境变量配置的翻墙导致的高延迟；之前通常延迟在4-9秒跳动，环境变量中去掉这个项目之后，我随手用postman发了大概10个请求，7成延迟在200以内，2成在200-400之间，1成在2s以上。而以前是7成在4s以上。
+今天发现这个问题的关键在于，我在我的RMBP本机，阿里云，搬瓦工，树莓派这几个地方的本机发送直接针对本地的REST请求，只有树莓派那里是502错误，我意识到502错误的解释是一个代理服务器相关问题，就大概猜测到问题在哪里了。而且树莓派通过frp映射出去从外网可以正常访问REST API，在本机却无法访问，这么奇怪的事，我就估计是本机环境配置问题；
+
+2018-05-17 09:08 今天我按照以下命令行，启动gunicorn，原则是后台worker进程数目是CPU核心数目的2倍+1，如此以后，树莓派2通过frp映射出来的API反应时间果然好了很多，虽然网络还是那么糟糕，但是经过我用Postman手工测试大概20-30次，8成以上延迟都在500以下了，5成在300以下。看来适当的后台进程仍然是很有效的；
+
+2018-05-16 14:14 JSX里面注释的语法需要在/* */这样的JS多行注释外面再加上一个大括号才行，如下：
+{/* 我的注释 */}
+如果不是这样，注释就会被原样输出到网页上；
+
+2018-05-16 16:16
+connect effects 表单 提交 React
+表单的大概提交方式是，提交按钮触发submitting，通过effects['form/submitRegularForm']触发后台的异步过程，也就是form.js里面的submitRegularForm函数，函数内部是一个yield异步请求，通过'../services/api'里面的fakeSubmitForm来把数据提交到后台的REST服务那里，最终实际执行的是一个async的函数，通过ajax之类方法提交到REST API；底层使用的Fetch API；
+我通过在最后一个函数，fakeSubmitForm内部记录日志获取了以下提交数据，注意此处js里面字段名都没有引号。还有myage是我自己添加的字段，直接用getFieldDecorator定义了一个新的字段名就产生了这个字段，这就是js这种动态语言的特性，某些变量可以直接产生；
+{title: "222", date: Array(2), myage: 2, goal: "333", standard: "3333", …}
+
+2018-05-16 17:12 又遇到问题：
+Failed to load http://localhost:2217/quote?num1=30&num2=61: The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. Origin 'http://localhost:8000' is therefore not allowed access.
+似乎要明确允许http://localhost:8000的跨域请求才行；这是npm start运行的本地项目；2217端口是我自己的api;
+
+2018-05-17 10:31 跨域请求的问题，在请求带有认证信息的情况下，服务器端要额外添加一个头部信息如下：
+resp.set_header('Access-Control-Allow-Credentials','true')
+只要这条就可以，不用额外明确允许哪些请求来源；
+
+2018-05-17 11:11 现在我更改了客户端的api.js里面的相应代码段，现在可以结构化参数的调用GET query的REST API了，关键代码如下：
+var url = new URL('http://localhost:2217/quote'),
+  params1 = {num1:100,num2:200}
+Object.keys(params1).forEach(key => url.searchParams.append(key, params1[key]))
+var promiseA=  request(url,{method: 'GET'});
+
+2018-05-17 14:06 很奇怪js代码的effects里面，console.log不起作用。
+
+2018-05-17 16:19
+this.props.dispatch
+一般model里不会返回任何数据的，如果需要callback就用dispatch({type,payload,callback}).
+
+2018-05-17 17:09 React的数据流转由models里面的js代码来执行；大体流程是：
+页面的按钮等元素通过dva的connect触发modles里面某个代码文件中的effects里面的处理函数；
+处理函数通过yield call调用api.js里面真正的处理函数
+真正处理函数内部用fetch api异步发送数据/获取数据/发送数据并且获取处理结果；
+处理完毕的结果通过yield put发送到reducers里面的处理函数去处理返回结果；
+前端页面通过state来使用React内部机制更新页面；
+大体流程是这样，但是具体的细节还没弄明白，还没能完成自己的Demo；
+目前我完成了网页输入2个数字，发送到REST API并获取返回的结果，通过console.log输出观察确认返回的结果正确，但是返回的结果如何通过这套流程回到页面上还没弄明白；
+
+2018-05-18 11:11
+好在 create- react- app 创造 的 应用 已经 具备 了 代理 功能， 所以 并不 用 花费 时间 来 开发 一个 代理 服务。
+在 weather_ react 应 用的 根 目录 package. json 中 添加 如下 一行： "proxy": "http:// www. weather. com. cn/", 这一 行 配置 告诉 weather_ react 应用， 当 接收 到 不是 要求 本地 资源 的 HTTP 请求 时， 这个 HTTP 请求 的 协议 和 域名 部分 替换 为 http:// www. weather. com. cn/ 转手 发出 去， 并将 收到 的 结果 返还 给 浏览器， 这样 就 实现 了 代理 功能。
+程墨. 深入浅出React和Redux (实战) (Kindle 位置 2701-2705). 机械工业出版社. Kindle 版本.
+不过这个方法只适合开发用途，生产用途不适合；
+
+2018-05-18 11:13 componentDidMount函数是React最佳发出数据请求的时机，因为该函数只会在浏览器端执行，不会在服务器端执行，而且该函数被执行的时候，组件已经渲染完成，可以发出数据请求了；
+简单的React自身直接和REST API打交道获取数据并渲染的过程：
+例子天气显示React组件，有状态的，后台获取数据后渲染的组件，做法是：
+构造函数有一个state字段，设置内部的weather字段数据初始值为null；
+render使用state中的null值的weather渲染“无数据”的初始组件；
+在componentDitMount函数中用新浏览器原生支持的fetch api发出REST请求，会异步返回，获得一个Promise对象，该对象对应的then里面是异步回调函数，catch是异常处理函数；在then里面用this.setState来传递返回结果；
+render根据state的更新来重新渲染组件；
+这个过程简单清晰，只有调用REST那部分由于网络的复杂性，显得有些复杂。但是对于复杂应用，还是应该使用Redux Store来保存状态；
+
+2018-05-18 11:34 我看看antd是如何保存状态的；好像就是redux，我看到的都是routerRedux，从react-router-redux导入的；
+
+2018-05-18 15:32 《深入浅出React和Redux》书籍配套github代码库：
+https://github.com/mocheng/react-and-redux/
+我用redux调试工具查看antd的工程，看到一部分信息，但是尚未找到我要的状态信息；也还没弄清楚这个工具的用法；
+
+2018-05-18 17:17
+前后端分离遇到跨域问题很正常，而这种基于RESTful API的前后端分离就更好弄了。我这以Fetch + PHP + Laravel为例，这种并不是最有解决方案！仅供参考！
+在 header 中进行如下配置
+Access-Control-Allow-Origin 配置允许的域
+Access-Control-Allow-Methods 配置允许的请求方式
+Access-Control-Allow-Headers 配置允许的请求头
+PHP例子如下：
+Route::group(['middleware'=> ['auth:api']], function() {
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: GET, HEAD, POST, PUT, PATCH, DELETE");
+    header("Access-Control-Allow-Headers: Access-Control-Allow-Headers, Origin, Accept, Authorization, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+    require base_path('routes/common.php');
+});
+
+20180519.1307.这是我在外面商场时的读书笔记.
+1327.React的状态管理用的Redux是Flux发展来的，就是一个单线程注册事件处理回调函数的框架。改变值通过dispatch一个action，注册的回调函数负责值改变的具体的处理逻辑，最后关注某个值的变化的组件也通过注册的值变化回调函数获得通知，然后根据值的变化去渲染界面元素。
+先大概看书获得一个基本印象，然后根据对应的代码调试获得实际的经验，然后用这些经验修改我的实际程序看看结果。
+在React组件初始化的时候从Redux获得初始值用于初始化内部状态，并注册变化监听回调函数随时根据Redux的值的变化更新显示。这是有状态组件的标准流程。这个单向数据流也使得追踪应用程序的逻辑很容易，这是传统MVC模式的弱点所在。
+FLUX/REDUX框架里面STORE只有GET方法而没有SET方法，要改变值只有派发ACTION，这看似一个限制，实际上极大的简化了程序逻辑。
+VIEW要改变Store的值必须而且只能发布action，这是为了代码可维护性，清晰性等等的缘故。
+REDUX采取全局唯一的树状STORE，内部的函数都是纯函数，不能有任何副作用。
+组件拆分为容器和展示两部分，前者负责状态变化，后者是个纯函数，只根据props来渲染界面。
+JS中三个点的运算符是代表把一个数组展开，多半用于函数参数等等场合。
+由于JS没有CPP的标准不统一，ABI不兼容等各种问题，而且开源文化流行，库基本上只能以源码形式发布，大家也乐于以源码形式分享成果，所以比cpp更早的实现了模块化，各种先进的软件开发模式等开发方法，极大的降低了开发成本。
+我感觉JS开发基本都是套路，而且是比CPP规范得多的套路，生态体系比CPP好多了，看github就知道。
+在JS社区，新的框架都用TODO应用代替传统的helloworld作为基本的展示用途。
+REACT开发最优实践，代码文件结构按照功能划分，可以避免一个小的修改就要满世界找一个个分散的代码文件修改的问题，而且有利于划分功能模块的边界。
+REDUX保存的数据是一个全局唯一的树状结构，每个组件都只能修改自己拥有的那个子树，但是所有子树的数据对所有组件都是全局可读的。也就是说修改权限控制在每个组件，但是大家都可以读取。
+前端应用中，数据的一致性最重要，性能在其次，而且有很多方法可以提高性能。
+考虑到扩展性，最好每个组件的ACTION前面都有一个唯一前缀区分不同组件的ACTION。
+简单REACT应用使用浏览器原生的fetch和服务器通信，返回Promise对象便于异步处理。
+REACT内置一个简单的代理功能可以处理跨域访问问题但是可能只能处理一个外部服务器。通过package.json中的配置。但这个只是方便开发，不适合产品环境使用。
+
+2018-05-21 17:18 我暂时放弃基本表单里面把API返回结果重新显示在该表单里面的努力，我看看多步表单的做法，把结果显示在一个结果页面吧。
+也就是说，我把antd里面的例子都看完，起码看个几个典型的例子；
+还有就是react/redux的demo代码也看完几个主要的代码；
+学会redux调试工具的使用；
+
+
+2018-05-22 10:46 我看了例子7，知道了Redux调试工具中，Inspector是一个日志类型的东西，每次执行的action都会显示在左边，具体的值在右边；action有type和result，其中的result里面的具体值带来state的改变，state的改变带来view的改变；
+例子程序里面，Reducer入口参数是(state = {status: Status.LOADING}, action)
+后面这几行，我稍有疑惑的是，action的值里面type: 'WEATHER/FETCH_SUCCESS',匹配FETCH_SUCCESS，那么这个匹配是自动去掉了前缀还是部分匹配，只要能区分唯一条件就行？后来我发现在actionTypes里面有对应；
+根据Redux调试工具前后对比，该行代码return的含义是，state的各项字段被三点运算符展开，赋值同样被三点运算符展开的action.result里面的各项值，并添加一项Status.SUCCESS；
+case FETCH_SUCCESS: {
+  return {...state, status: Status.SUCCESS, ...action.result};
+}
+
+2018-05-22 13:33 一般的reducer就是个输入（oldStatus,Action)，输出(newStatus)的纯函数；
+试验了一下，三点运算符的那个return语句，增加项目可以，作用是增加返回结果里面的项目，但是想修改已有字段是做不到的；
+
+2018-05-22 14:45 多步窗口流程：
+使用antd组件组成窗口，import { Form, Input, Button, Select, Divider } from 'antd';这些组件，具体用法去参考组件文档https://ant.design/docs/react/introduce-cn
+第一步窗口输入完毕之后，点击“下一步”按钮实际触发的是函数onValidateForm，使用validateFields校验各个字段的合法性以后，dispatch action form/saveStepFormData,payload是本form里面各个字段的值，通过getFieldDecorator定义的；然后用routerRedux跳转路由到确认页面/form/step-form/confirm；
+
+
+2018-06-13 13:49 React调试：
+chrome里面，Option-Command-I调出来调试窗口，然后打开React栏目（需要先安装React和Redux两个调试扩展）。然后搜索框里面搜索自己要关注的组件的类或者实例名字，这样就可以过滤出来关注的那个组件了；
+
+2018-06-13 14:08 我发现adp的应用标题是写死在SiderMenu组件的源码中，这不是好的设计风格，我就改了改：
+上层的index.js里面，新增一个appTitle的属性，标题数据在这里修改：
+//新增appTitle作为应用标题，标题数据写在上层而不是组件源码中
+      <SiderMenu {...props} collapsed={props.isMobile ? false : props.collapsed} appTitle='待办事项1402' />
+底层组件源码里面的SiderMenu.js:
+//新增appTitle属性作为应用标题，而不是在组件源码中写死
+const { logo, collapsed, onCollapse,appTitle } = this.props;
+//新增appTitle作为应用标题,实际使用标题的地方
+<h1>{appTitle}</h1>
+
+
 2018-06-21 16:56 antd代码里面login步骤：
 service/api.js里面的fakeAccountLogin函数内部是实际执行login动作的地方；收到的数据是fakeAccountLogin {userName: "admin", password: "888888", type: "account"}，我估计这个Demo里面就直接返回成功了， 实际程序要去后台REST API执行认证过程；
 model/login.js里面的effects小节内部异步调用了fakeAccountLogin，并作出相应处理；

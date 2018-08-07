@@ -1,3 +1,49 @@
+2018-05-10 10:27 JSON和Protobuf相比，双精度浮点数编解码速度有数量级差距，大量整数数组的编码速度和大小方面有数量级差距；所以：
+JSON适合的应用场景：数据以字符串为主，数据量不是很大，对传输带宽不是很敏感（例如移动网络），对外提供广泛而数据量不大的Service接口的场合；
+Protobuf适合的应用场景：数据以整数，浮点数为主，数据量很大因而有必要节约传输带宽提高性能，仅仅用于内部系统之间交互，或者只对外提供少量服务器之间数据交互但是有必要节约传输带宽的场合；
+绝大部分应用系统都还没有到需要考虑传输性能的地步，特别是外部REST API接口；外部API接口真有某些个别巨大数据量的场合的时候可以考虑使用JSON格式的接口发送pb格式的“批量操作API”的各种元数据，然后再通过这个少量的PB接口获取大批量数据；
+也就是说，对外API接口平时以容易理解的JSON接口为主，个别特例用PB接口；
+
+2018-05-11 09:44 我找到新的定时提醒的方式了，几行Python程序，使用time和webbrowser模块，定时用webbrowser模块调用浏览器打开指定网页即可达到提醒自己的效果；python程序自身用nohup mynotify.py &的方式在后台运行，即便关掉终端窗口也还是在后台运行，就可以不在任务栏显示烦人的图标了；而使用一个持续运行的Python程序，则提醒时间等等都可以自己随心定制，比crontab灵活多了；也可以用atmo打开某个文本文件作为提示；
+
+2018-06-10 11:18 常用docker镜像
+django
+microsoft/dotnet *
+memcached
+mysql
+golang *
+erlang
+rust *
+swift
+r-base
+haskell *
+thrift
+pypy
+iojs
+wordpress
+logstash
+influxdb
+rethinkdb
+zookeeper
+
+opensuse
+fedora
+debian
+
+
+redmine
+joomla
+jenkins
+drupal
+
+java
+openjdk
+maven
+jetty
+elasticsearch
+kibana
+haproxy
+
 2018-06-25 16:54 数据长期保存50年以上乃至于更久的方法：
 磁带机，这个有标准协议，向下兼容；（尽管如此，为了保险，每隔5年重新Copy比较好）
 二维码，然后刻录在金属板子上或者打印在纸上，容量还凑合。（你可以试试用paperbak这个软件，一张A4能存500KB数据，用激光打印机打印完塑封保存100年都没问题。http://ollydbg.de/Paperbak/）
