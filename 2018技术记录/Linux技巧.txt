@@ -1,3 +1,71 @@
+2018-04-12 09:40 今天似乎搬瓦工VPS down掉了。起先我注意到电脑翻墙有问题，然后试了试手机翻墙也有问题，由此排除了我的公司网络的问题；后来我又在阿里云香港节点新开一个实例，也发现ping不通我的搬瓦工IP，然后加上ss，登录到搬瓦工的控制面板，发现不知为何我的搬瓦工VPS被人用来大量发送垃圾邮件因此被暂停服务了；下次我得看看有多少端口是打开的，以及貌似这个没有防火墙。那我只有手工自己在系统里面用防火墙防止SMTP端口被人滥用了；
+#我的SSH端口
+ufw allow 28975
+ufw allow ssh
+ufw allow http
+ufw allow https
+#5个ShadowSocks端口
+ufw allow 1897
+ufw allow 2270
+ufw allow 4904
+ufw allow 5058
+ufw allow 6091
+#封禁发送垃圾邮件
+ufw deny in 25
+ufw deny in 110
+ufw deny out 25
+ufw deny out 110
+ufw deny out 143
+ufw deny out 465
+ufw deny out 587
+ufw deny out 993
+ufw deny out 995
+#允许我常见的家里一个IP段(32C),公司2个IP段(1B)的电脑从任何端口收发数据；
+#手机等翻墙用途只需要上面5个端口就行了；
+ufw allow from 223.72.64.0/19
+ufw allow from 61.51.81.0/24
+ufw allow from 106.120.142.0/24
+#注意：设定好恰当的允许规则以后，再默认禁止其他进来的包，然后开启防火墙。
+ufw default deny incoming
+ufw enable
+
+2018-04-12 13:07 奇怪，我上午11点多重装好了搬瓦工的系统，然后没过2小时，搬瓦工VPS又被停用了，又是大量发送垃圾邮件，为什么会发生这种事，哪里的问题？
+网上找了其他人也遇到过，猜测可能是某个脚本出了问题，我估计是不是那个tedday的一键安装脚本出问题了，不过我外加ufw deny out 25,然后使用非root运行shadowsocks看看吧，此外把端口和密码都换掉。
+
+
+2018-04-12 13:42 采用以下服务器配置文件，同时配合防火墙禁止本机访问外部主机的25(SMTP)端口，以及使用一个普通账户来执行ss，应该可以解决被滥用发送垃圾邮件的问题。
+如果垃圾邮件来自我的某台电脑或者是我曾经告诉过SS账号的某台电脑，那么ufw deny out 25可以解决掉；
+我这次换了端口和密码，其他我曾经告诉过账号的电脑都无法使用了，就不可能通过我这个发送垃圾邮件了（也许哪个不懂电脑的人机器中毒发送垃圾邮件）
+这次没有使用外部脚本（这是垃圾邮件来源的最大可疑之处），应该不会有垃圾邮件发出了。即便有，也会被ufw deny out 25限制无法发送；
+这个系统镜像本身，以及apt update源，应该都不是垃圾邮件的来源。现在就看看接下来的效果吧。
+apt install python3 python-pip
+pip install shadowsocks
+ssserver -c mysscfg.json &
+mysscfg.json内容如下：
+{
+"server":"0.0.0.0",
+"local_address":"127.0.0.1",
+"local_port":1080,
+"port_password":{
+         "1897":"MYFAKEPASSWORD",
+         "2270":"MYFAKEPASSWORD",
+         "4904":"MYFAKEPASSWORD",
+         "5058":"MYFAKEPASSWORD",
+         "6091":"MYFAKEPASSWORD"
+},
+"timeout":300,
+"method":"aes-256-cfb",
+"fast_open": false
+}
+
+2018-04-12 14:30
+用命令随机产生比较难以破解的密码，例如:
+    head -c 512 /dev/urandom | md5sum | base64 | cut -c3-18
+v2ray安装非常简单：
+ bash <(curl -L -s https://raw.githubusercontent.com/v2ray/v2ray-core/master/release/install-release.sh)
+ v2ray配置生成器：https://htfy96.github.io/v2ray-config-gen/#
+ /usr/bin/v2ray/v2ray -config /home/bwg/v2ray.json &
+
 
 2018-07-19 09:08
 Windows机器上，我成功使得pip走v2ray的通道去更新数据，方法是我的home目录（也就是打开cmd之后的默认目录）下建立目录pip，该目录下放一个pip.ini，内容如下：

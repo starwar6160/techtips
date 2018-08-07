@@ -1,3 +1,23 @@
+2018-04-03 09:59
+Python教程
+https://www.liaoxuefeng.com/ Python教程，JavaScript教程，Git教程都有了；
+https://www.zhihu.com/question/24590883	各方面很多强大的Python库介绍资料
+React教程：
+https://www.zhihu.com/question/19834302	零基础的前端开发初学者应如何系统地学习？
+http://www.ruanyifeng.com/blog/2015/03/react.html	React 入门实例教程
+https://hulufei.gitbooks.io/react-tutorial/content/introduction.html React入门教程
+https://www.cnblogs.com/yunfeifei/p/4486125.html	一看就懂的ReactJs入门教程-精华版
+
+2018-04-19 16:08
+http://www.infoq.com/cn/articles/modern-frontend-developer-in-2018?utm_campaign=rightbar_v2&utm_source=infoq&utm_medium=articles_link&utm_content=link_text 2018年，现代的前端开发者应该学习哪些东西？
+
+2018-04-24 14:39 Falcon API文档：
+http://falcon.readthedocs.io/en/stable/api/api.html
+
+2018-04-24 15:39 启动Falcon API并且指定IP和端口的方法：
+gunicorn apiStart:api --bind 0.0.0.0:9001
+
+
 2018-05-02 17:09 继续试验antd，我发现menu和route里面，更改页面的标题，path，路由需要一起更改.而具体的js文件名不用更改；
 
 2018-05-03 15:49 antd继续分析：
