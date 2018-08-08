@@ -1,3 +1,13 @@
+2018-03-05 09:45
+如果是前后端完全分离的开发模式，要做国际化，真的太简单了，有现成的解决方案，基于Node构建的时下热门的任何一种技术选型都有成熟的方案，比如：
+vue + vue-i18n
+angular + angular-translate
+react + react-intl
+从框架层面来看，各大框架都会有相对应的国际化插件，例如：vue-i18n, angular-translate, react-intl等，这些插件可以无缝接入当前的开发环节当中。优点是这些框架层面的国际化插件使用灵活，可以进行静态文案的翻译，动态文案的翻译。缺点就是开发过程中使用不同的框架还需要去学习相对应的插件，存在一定的学习成本，同时在业务代码中可能存在不同语言包判断逻辑。
+所谓国际化，是指根据浏览器HTTP请求头中Accept-Language中指定的语言、或者用户指定的语言（Cookie、session中指定）， 将web页面中的一些文本使用该语言展示出来。
+jQuery.i18n.properties 是一款轻量级的 jQuery 国际化插件。与 Java 里的资源文件类似，jQuery.i18n.properties 采用 .properties 文件对 JavaScript 进行国际化。jQuery.i18n.properties 插件根据用户指定的（或浏览器提供的 ）语言和国家编码（符合 ISO-639 和 ISO-3166 标准）来解析对应的以“.properties”为后缀的资源文件。
+
+
 2018-04-03 09:59
 Python教程
 https://www.liaoxuefeng.com/ Python教程，JavaScript教程，Git教程都有了；

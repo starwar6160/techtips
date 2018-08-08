@@ -1,3 +1,81 @@
+2018-03-05 22:38 今天家里网络偶尔频道拥堵，自动切换到了2.4G频道，结果我发现ping能够几十到几百，然后我把5G频段换了一个，重新都连上5G，就降低到4.5了，还是5G频段延迟低得多，估计是用的人少的缘故；
+
+2018-03-09 11:42 文件共享系统：
+Seattle：服务器端文件是加密分片保存的，是优点也是缺点；
+OwnCloud：中文支持比较弱，中文目录不支持，中文内容是UTF8的，倾向于排除；
+两个系统都是Linux系统上部署很方便，Windows上比较难；
+如果服务器在外网托管或者是租赁VPS，又要上传下载保密文档的话，当然seafile是不二选择。
+
+2018-03-09 14:04
+总结Seafile 的一些特色：
+文件组织成资料库，每个资料库可以单独同步和共享
+用户可为每个同步的目录单独设置数据加密密码，在上传数据到服务器之前，Seafile 会先使用用户的密码对数据加密。这个密码不会上传到服务器，也就是说，连服务器的管理员都无法偷看你的私人数据
+群组功能，用户可以创建和加入群组, 在群组中共享文件。这对团队协作很有用
+在线文件协作，包括文件在线预览、评论、推荐等等
+txt 纯文本、Markdown、源代码等文本格式可以直接在线编辑
+Seafile 采用了类似 git 的数据模型和分布式同步技术，但是针对自动同步和大文件管理做了优化，同其他的开源项目(SparkleShare, Owncloud) 相比 Seafile 并不需依赖于 git
+最后最重要的！！！seafile支持自定义LOGO和CSS样式，卧槽简直装逼神器！！！
+
+作者：田小宇
+链接：https://zhuanlan.zhihu.com/p/26070313
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+Seafile，是“开源的私有云存储”。近日在家里的Windows台式机上的Ubuntu子系统配置了Seafile。为啥不直接拿台Linux电脑？当然是因为穷，交不起两台电脑的电费……Ubuntu子系统，需要Windows 10 专业版 版本 1709以上，在控制面板->程序->启用或关闭 Windows 功能中打开适用于 Linux 的 Windows 子系统，然后在Microsoft 应用商店中下载Ubuntu即可。
+
+作者：曾晋哲
+链接：https://zhuanlan.zhihu.com/p/33579926
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+2018-03-13 09:22 Mac FlushDNS的方法，为了新的OA系统：
+sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache
+
+2018-03-13 13:41 Windows Server 2016安装过程中：
+这里要输入密钥：CB7KF-BWN84-R7R2Y-793K2-8XDDG，（不要选择“我没有密钥”，否则后面无法激活）然后下一步
+
+2018-03-15 09:50
+增加我的身份：
+git config --global user.name "Zhou Wei"
+git config --global user.email "zhouwei6160@gmail.com"
+git add . 把所有修改的部分加入暂存区；
+git status看看确定要提交的内容正确；
+git commit -m "修改local.py的pgsql参数为了docker部署."
+
+2018-03-15 16:54
+This script (docker-show-repo-tags.sh) should work for any docker enabled host.
+#!/bin/sh
+#
+# Simple script that will display docker repository tags.
+#
+# Usage:
+#   $ docker-show-repo-tags.sh ubuntu centos
+for Repo in $* ; do
+  curl -s -S "https://registry.hub.docker.com/v2/repositories/library/$Repo/tags/" | \
+    sed -e 's/,/,\n/g' -e 's/\[/\[\n/g' | \
+    grep '"name"' | \
+    awk -F\" '{print $4;}' | \
+    sort -fu | \
+    sed -e "s/^/${Repo}:/"
+done
+
+2018-03-19 10:57
+docker run -p 9001:9001 -d fuerst/etherpad-docker
+访问zwaly1:9001即可打开我的EtherPad服务器；虽然没有用户身份认证，但是可以认为基本是安全的，因为知道这个IP和端口的人没几个，防火墙又限制了仅仅三五个B类段可以访问，所以基本不用担心安全性问题；
+
+2018-03-23 08:44 NodeJS教程
+https://www.nodebeginner.org/index-zh-cn.html	Node入门	本书致力于教会你如何用Node.js来开发应用，过程中会传授你所有所需的“高级”JavaScript知识。本书绝不是一本“Hello World”的教程。
+https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434501245426ad4b91f2b880464ba876a8e3043fc8ef000	廖雪峰NodeJS教程
+https://www.zhihu.com/question/19793473	怎样有效地学习 Node.js？
+https://www.imooc.com/course/list?c=nodejs	慕课网nodejs教程
+
+2018-03-23 08:56 微软机器翻译API：每月2M字符以内的小规模用户可以免费使用，大规模用户可以批量购买；
+https://www.microsoft.com/zh-cn/translator/translatorapi.aspx
+
+2018-03-26 15:14 nodejs调试工具：
+http://web.jobbole.com/94184/	Node 调试工具入门教程：2016年，Node 决定将 Chrome 浏览器的”开发者工具”作为官方的调试工具，使得 Node 脚本也可以使用图形界面调试，这大大方便了开发者。
+
+
 2018-04-08 16:09
 很多人会在选择一个cms做建站前会问起joomla和wordpress、drupal选择哪个更好？实际上这个问题并不复杂，但是很多人很难直观理解这几个系统区别所在。就用交通工具来举个例子也许大家会明白，Wordpress是电动自行车——上手容易，起步简单。Joomla是成品汽车——你要驾驭它前期也许会让你觉得还要考取驾照，是个比较麻烦的事情。但后期开起车来自然也就舒适平稳很多。Drupal是配件工厂——更适合组装成个性的东西，你需要什么样的车凭自己能力自己组装构建吧，哪怕你要组装一辆坦克开着高兴就好。所以，选择哪个cms来构建网站，完全要看自己的实际需求。如果你去附近菜市场买菜，当然是骑电动车比开车要好很多....
 WordPress / Joomla / Drupal 是真正开源产品，遵循开源协议，不搞什么加密授权（比如shopEX搞的zend老版本，到php 5.3的主机上就挂掉了）！使用后没有任何法律纠纷，有专业的开发文档，专业的开发团队！

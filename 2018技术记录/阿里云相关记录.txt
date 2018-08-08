@@ -1,3 +1,39 @@
+2018-03-01 16:38 阿里云官方给出的测试随机IOPS的命令，我修改执行时间从1000秒改为100秒了；
+fio -direct=1 -iodepth=128 -rw=randread -ioengine=libaio -bs=4k -size=1G -numjobs=1 -runtime=100 -group_reporting -filename=iotest -name=Rand_Read_Testing
+fio -direct=1 -iodepth=128 -rw=randwrite -ioengine=libaio -bs=4k -size=1G -numjobs=1 -runtime=100 -group_reporting -filename=iotest -name=Rand_Write_Testing
+结果：4K随机读IOPS 2396，延迟 53ms;4K随机写IOPS 1236，延迟103ms;
+svvm用这个命令测试，读取1962/延迟65,写入665/延迟192；
+
+2018/3/4 19:23:40 [星期日] 阿里云的OSS资源包里面下行流量包，最低规格的50G每月，1年时长108元，等于每月9元包50G。相对于按需流量价格0.5元/G也就是说每月下行流量超过18G的话用资源包更合算，自己备份目的的话，按量付费更合算；
+存储包：最低规格40G，1年花费是9元，这是对于普通用量小的用户的一个特别优惠，等于鼓励大家试用。往上一个等级100G就是117元了，1T是1242元，大概可以算1G一年1.2元是正常价格。
+低频访问存储价格是8分钱/G/月，最低按照30天收费，归档存储是3.3分钱/G/月，最低按照60天收费，这两者只能按量付费，没有资源包。归档存储比AWS强，1分钟左右时间即可恢复，不像AWS要几个小时的时间；低频访问型存储、归档型存储，Object小于128KB文件按照128KB文件大小计算存储空间，超过128KB大小的Object按照实际大小计算存储空间。所以这两者最好是压缩打包加密后保存；
+
+2018/3/4 19:59:27 [星期日]
+https://zhuanlan.zhihu.com/p/22814243?from=timeline&isappinstalled=0	阿里巴巴73款开源产品全向图
+
+2018-03-05 16:44 阿里云ECS监控插件手工安装：
+sudo bash -c 'CMS_HOME="/usr/local/cloudmonitor" CMS_VERSION="1.2.22" CMS_ARCH="linux64" CMS_PROXY="bjcmsproxy.aliyun.com:3128"; \
+if [ -f $CMS_HOME/wrapper/bin/cloudmonitor.sh ] ; then $CMS_HOME/wrapper/bin/cloudmonitor.sh remove; rm -rf $CMS_HOME; fi ; \
+mkdir -p $CMS_HOME && \
+wget -e "http_proxy=$CMS_PROXY" -O "$CMS_HOME/cloudmonitor.tar.gz" "http://cms-download.aliyun.com/release/$CMS_VERSION/$CMS_ARCH/agent-$CMS_ARCH-$CMS_VERSION-package.tar.gz" && \
+tar -xf $CMS_HOME/cloudmonitor.tar.gz -C $CMS_HOME && \
+rm -f $CMS_HOME/cloudmonitor.tar.gz && \
+chown -R root:root $CMS_HOME && \
+$CMS_HOME/wrapper/bin/cloudmonitor.sh install && \
+$CMS_HOME/wrapper/bin/cloudmonitor.sh start'
+查看运行状态
+sudo /usr/local/cloudmonitor/wrapper/bin/cloudmonitor.sh status
+重启
+sudo /usr/local/cloudmonitor/wrapper/bin/cloudmonitor.sh restart
+我用该方法成功安装了所有ECS主机的监控，过几天看看监控结果可以确定我们需要多高配置的机器。云计算其实更多的是弹性增加机器，而不是一开始就有很大性能冗余；
+
+2018-03-07 08:58 试试看OSS用作数据备份；
+http://blog.csdn.net/qq_36510261/article/details/78874317   【云计算的1024种玩法】使轻松将服务器文件备份至 OSS
+教程的主角是 alicloud-duplicity，它是在 duplicity 的基础上支持OSS存储的开源备份工具，alicloud-duplicity 支持 duplicity 的所有命令和参数。duplicity 是一款开源的备份工具，使用librsync 支持增量备份，节约本地存储空间，同时使用GnuPG加密数据。duplicity 能将数据轻松的备份到本地、共享存储和云存储等。
+使用 alicloud-duplicity 可以实现全量备份和增量备份并对其进行加密并且上传至 OSS。
+https://www.mindg.cn/?p=555 自动备份db数据到阿里云OSS
+
+
 2018-04-08 13:25 请参考以下内容，可能是低成本替代ES集群的更好方法：
 https://jishu.io/kubernetes/goodbye-elk-hello-fluent-bit-aliyun/	再见ELK，您好fluent-bit-aliyun
 

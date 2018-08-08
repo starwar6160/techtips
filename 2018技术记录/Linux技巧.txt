@@ -1,3 +1,316 @@
+2018-03-02 08:41
+A是公网机器，B和C是内网机器
+首先在B 上建立一个SSH 隧道，将A 的6766 端口转发到B 的22 端口上：
+在B上的操作：：ssh -i ~/.ssh/gw724.pem -qngfNTR 6766:localhost:22 userA@siteA -p 22
+下面在B 上做之前类似的事情，不同的是该隧道会由autossh 来维持，注意此处末尾没有-f让参数传达到ssh之前就把ssh转入后台的话可能会有错误产生：
+autossh -i ~/.ssh/gw724.pem -M 6777 -NR 6766:localhost:22 userA@siteA -p 22 -f
+-M 参数指定的端口用来监听隧道的状态，与端口转发无关。
+之后你可以在A 上通过6766 端口访问B 了：
+ssh -p 6766 userB@localhost
+或者是从C直接穿透2层NAT访问B：
+ssh -p 6766 userB@siteA
+注意，B连到A，C通过A连到B，都是公钥方式比较方便。如果是普通一点的通过A作为跳板机登录B的话，那么在A上也需要有B的私钥，如果A不是自己独家控制的话，有点不安全，所以此时还是从C直接穿透2层NAT访问B比较好；
+ssh -qngfNTR 6766:localhost:22 root@work2 -p 22
+autossh -M 6777 -NR 6766:localhost:22 root@work2 -p 22 -f
+
+2018-03-02 09:23 刚才9点左右，通过autossh,ssh反向隧道，我建立了到家里台式机里面ubuntu VM的SSH反向隧道，看看能否稳定维持吧；这个方式和SoftEtherVPN相比，VPN的方式其他机器其实还是稳定的，起码有自动重新连接，但是Mac没有客户端，要用系统自己的L2TP连接，这个不太稳定，时不时断线，好的能有一两小时，差的几分钟就断线，不知道是不是线路中间有状态检测设备掐断的连接；
+
+2018-03-02 10:04 结果现在过了1小时左右，这个autossh建立的反向隧道也没能保持住，还是无法连接了，我登录到跳板机去试过了也是无法连接；
+
+2018-03-02 11:36 我用这条命令成功用一条autossh命令建立了ssh反向隧道，看看能否坚持1小时以上吧；
+之前我的用法可能有点问题，是单独建立ssh反向隧道，然后又一条autossh命令，网上提到的似乎没有提到如果这么两条命令分开来用的话就无法保持ssh连接，因为两条命令之间并无联系。
+我用ps -ef |grep 6766 看到的单独的ssh命令是一个进程，autossh及其子进程又是2个进程；
+autossh -M 6777 \
+-fN -o "PubkeyAuthentication=yes" \
+-o "StrictHostKeyChecking=false" -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" \
+-R work2:6766:localhost:22 \
+-p 22 root@work2
+
+2018-03-02 13:38 直到现在，2小时时间，虽然从客户端角度来说ssh断了两三次，但是服务器端也就是从我家里PC到阿里云的这段反向隧道看来是挺稳定的，一直都能用，就是我的ssh断开的话，马上再连接即可。看来这次的用法对了；那我以后就可以用这个方法稳定使用家里机器了。
+
+2018-03-03 22:18 Amazon Elasticsearch Service 开发人员指南 (API Version 2015-01-01)
+https://docs.aws.amazon.com/zh_cn/elasticsearch-service/latest/developerguide/what-is-amazon-elasticsearch-service.html
+我发现，AWS也提供了托管的ES服务，并且最小支持的实例类型是t2.micro.elasticsearch，1核心1G内存；那我可以在家里电脑上开3个node的ES容器，每个node 4G内存，试试看能跑多少规模的数据还有不错的性能，并且比较SSD和机械硬盘；我也用fio测试一下家里西数绿盘的IOPS；
+
+2018-03-04 11:32 iops测试批处理：
+fio -direct=1 -iodepth=128 -rw=randread  -bs=4k -size=1G -numjobs=1 -runtime=100 -group_reporting -filename=iotest -name=Rand_Read_Testing -ioengine=libaio
+fio -direct=1 -iodepth=128 -rw=randwrite  -bs=4k -size=1G -numjobs=1 -runtime=100 -group_reporting -filename=iotest -name=Rand_Write_Testing -ioengine=libaio
+fio -direct=1 -iodepth=64 -rw=read -bs=1024k -size=1G -numjobs=1 -runtime=1000 -group_reporting -filename=iotest -name=Read_PPS_Testing -ioengine=libaio
+fio -direct=1 -iodepth=64 -rw=write -bs=1024k -size=1G -numjobs=1 -runtime=1000 -group_reporting -filename=iotest -name=Write_PPS_Testing -ioengine=libaio
+
+2018-03-04 11:40 阿里云的测试中-size=1G可能是为了利用底层的缓存什么的优化测试结果。比较正式的较长时间的iops测试这个值都要起码是内存大小的2倍以上，一般都在最小10G以上；但是如果说并不是大量读写的应用的话，这么优化也可以说基本符合使用场景，也不能说有多大问题；
+SSD方面，高端和入门级的差距不仅仅在于IOPS/吞吐量/延迟，还有一个重要的指标，最大延迟，低端的有时候能到几百ms，这对于一些延迟敏感的应用比如OLTP是无法忍受的；
+
+2018/3/4 10:01:34 [星期日] windows，我的家里台式机IOPS测试结果，没有libaio,就采用默认的值。如果是Linux，命令行加上-ioengine=libaio；
+fio -direct=1 -iodepth=128 -rw=randread  -bs=4k -size=1G -numjobs=1 -runtime=100 -group_reporting -filename=iotest -name=Rand_Read_Testing
+fio -direct=1 -iodepth=128 -rw=randwrite  -bs=4k -size=1G -numjobs=1 -runtime=100 -group_reporting -filename=iotest -name=Rand_Write_Testing
+SSD1(C:)测试：4K随机读18.2k，延迟3.6ms;4K随机写IOPS 15.9k，延迟4.1ms;
+SSD2(D:)测试：4K随机读21.4k，延迟3.3ms;4K随机写IOPS 22.4k，延迟2.9ms;
+阿里云高效云盘：4K随机读IOPS 2396，延迟 53ms;4K随机写IOPS 1236，延迟103ms;
+svvm(Xeon E5/机械硬盘)：读取1962/延迟65,写入665/延迟192；
+GCE测试：4K随机读497，延迟257ms;4K随机写IOPS 1535，延迟83ms;
+HDD西数紫盘(E:)测试：4K随机读527，延迟241ms;4K随机写IOPS 505，延迟253ms;
+那么结果就是，阿里云的高效云盘，性能是略高于服务器等级的机械硬盘的。紫盘这种仓库盘的随机读写性能实在很低；
+
+2018/3/4 10:18:54 [星期日] 如果是Linux，命令行加上-ioengine=libaio；
+测试顺序读吞吐量，运行以下命令：
+fio -direct=1 -iodepth=64 -rw=read -bs=1024k -size=1G -numjobs=1 -runtime=1000 -group_reporting -filename=iotest -name=Read_PPS_Testing
+测试顺序写吞吐量，运行以下命令：
+fio -direct=1 -iodepth=64 -rw=write -bs=1024k -size=1G -numjobs=1 -runtime=1000 -group_reporting -filename=iotest -name=Write_PPS_Testing
+SSD1(C:):顺序读取505M/s,124ms;顺序写入273M/s,233ms;
+SSD2(D:):顺序读取529M/s,118ms;顺序写入325M/s,195ms;
+HDD西数紫盘(E:):顺序读取83M/s,772ms;顺序写入78M/s,819ms;
+阿里云高效云盘:顺序读取82.4M/s,0.8ms;  顺序写入没有libaio是77.4M/11.2ms,加上libaio是81.1M/0.8ms,看来libaio主要是对延迟有很大影响
+GCE:顺序读取20M/s,3249ms;顺序写入104M/s,627ms;
+GCE顺序读取性能只有阿里云的1/4，延迟更是令人发指，差3个数量级，顺序写入性能和阿里云相当，延迟也差3个数量级左右，看来GCE的最低配置本地IO性能实在非常低，看起来这个指标应该是好几十个实例共享一个西数紫盘这样的仓库盘等级的机械硬盘；
+而阿里云的高效云盘，看来恐怕是高性能服务器机械硬盘外加一些精心优化之后的结果，一般用用还不错；
+
+2018/3/4 10:50:31 [星期日] 我又测试了VMWARE里面的虚拟机Ubuntu IOPS,结果如下，等于IOPS有6倍的损失，延迟有10-12倍的损失；
+4K随机读2.7k，延迟47ms;4K随机写IOPS 3.0k，延迟42ms;
+
+2018/3/4 11:47:52 [星期日]
+FIO是测试IOPS非常好的工具，用来对硬件进行压力测试和验证。建议使用libaio的I/O引擎进行测试，请用户自行安装FIO和Libaio。
+不同场景的测试公式基本一致，只有3个参数（读写模式，ipdepth，blocksize）的区别。下面举例说明使用block size为4k，iodepth为1来测试顺序读性能的命令。
+常见用例如下：
+block=4k iodepth=1 随机读测试，能反映磁盘的时延性能；
+block=128K iodepth=32 能反映峰值吞吐性能 ;
+block=4k iodepth=32 能反映峰值IOPS性能。
+
+2018/3/4 11:50:55 [星期日]
+UnixBench 是测试类 Unix 系统性能的老牌工具，也是常用的基准测试工具。它会执行 11 个单项测试，包括字符串处理、浮点运算效率、 文件数据传输、管道吞吐等，然后将结果与一个基准系统进行比较，得到一个指数值。指数值越高，性能越好。
+最终的得分比单个测试的结果根据参考价值，而且也方便对服务器进行比较。
+在安装 UnixBench 之前，要先准备好相关的依赖。请执行：
+apt-get install libx11-dev libgl1-mesa-dev libxext-dev perl perl-modules make gcc
+下载安装包，然后按下面的提示操作。官方的源在 googlecode 上，国内访问不便，我已经将文件上传到对象存储服务。
+wget http://codingpy-1252715393.cosgz.myqcloud.com/archive/UnixBench5.1.3.tgz
+tar xvf UnixBench5.1.3.tgz
+cd UnixBench
+make
+运行 make 之前，确保将 Makefile 文件中 GRAPHICS_TEST = defined 行被注释掉，因为我们是在服务器端进行测试，不需要做 2D/3D 图形测试。
+最后，执行：
+./Run
+UnixBench 测试的运行时间比较长，期间可以离开去干别的事情。
+除了直接在命令行输出测试结果之外（如下图），还会在 result 目录下生成一个 HTML 格式的报告，可以将其拷贝至本地。
+UnixBench 测试结果
+一般来说，得分在 1000 以上的云服务器就算还不错的。
+
+2018-03-05 14:25 SSH登录阿里云机器遇到认证问题的解决方法：
+"Too many Authentication Failures for user root" means that Your SSH server's MaxAuthTries limit was exceeded. It happens so that Your client is trying to authenticate with all possible keys stored in /home/USER/.ssh/ .
+This situation can be solved by these ways:
+ssh -i /path/to/id_rsa root@host
+Specify Host/IdentityFile pair in /home/USER/.ssh/config .
+Host host
+IdentityFile /home/USER/.ssh/id_rsa
+Host host2
+IdentityFile /home/USER/.ssh/id_rsa2
+Increase MaxAuthTries value on the SSH server in /etc/ssh/sshd_config (not recommended).
+
+2018-03-05 14:32 我在我的阿里云ECS上遇到SSH登录公钥失败次数太多的问题并且无法恢复。我在阿里云控制台重置了root的登录密码以后，用临时禁止公钥认证的方法使用用户名密码登录进去了。但是另一个窗口仍然无法公钥登录，我估计我得删除我自己这里的ssh-add的公钥钥匙链了。
+后来我用ssh-add -D清理了所有的缓存的ssh私钥；回头只加入极少量常用的即可，稍微不常用的，都写入配置文件好了；以下是~/.ssh/config文件的配置内容，指定了各个域名的默认SSH私钥，还指定了用户名，以及个别比如搬瓦工还指定了端口；
+Host zwaly1
+User root
+IdentityFile /Users/zhouwei/.ssh/zwAly1803.pem
+
+Host work2
+User root
+IdentityFile /Users/zhouwei/.ssh/gw724.pem
+
+Host es1
+User root
+IdentityFile /Users/zhouwei/.ssh/gw724.pem
+
+Host web3
+User root
+IdentityFile /Users/zhouwei/.ssh/gw724.pem
+
+Host gce
+User zhouwei6160
+IdentityFile /Users/zhouwei/.ssh/gce1019Pri.pem
+
+Host bwg
+User root
+Port 29875
+IdentityFile /Users/zhouwei/.ssh/bwgvps1709Pri.pem
+
+Host git-codecommit.ap-southeast-1.amazonaws.com
+IdentityFile /Users/zhouwei/.ssh/awsCodeCommitPri1711.pem
+
+Host scvm
+User zhouwei
+IdentityFile /Users/zhouwei/.ssh/zwLinuxHost20131121pri.pem
+
+Host spi1
+User pi
+IdentityFile /Users/zhouwei/.ssh/zwLinuxHost20131121pri.pem
+
+Host spi2
+User pi
+IdentityFile /Users/zhouwei/.ssh/zwLinuxHost20131121pri.pem
+
+Host 192.168.1.2
+User zw
+IdentityFile /Users/zhouwei/.ssh/zwLinuxHost20131121pri.pem
+
+2018-03-08 08:55 Linux安装ShadowSocks：
+apt install python3
+pip install shadowsocks
+ssserver    看看服务器端说明
+sslocal     看看客户端说明
+以下命令启动一个shadowsocks客户端，-s bwg指定的是我的搬瓦工VPS域名，事先在/etc/hosts里面写好ip对应bwg,-p是搬瓦工服务器端ss的端口号，-k是对称密钥，-d是后台运行daemon的意思；
+sslocal -s bwg -p 1710 -k 5338ISGN5282FLME -d start
+{
+	"server":"bwg",
+	"server_port":3432,
+	"local_address":"127.0.0.1",
+	"local_port":1080,
+	"password":"MYFAKEPASSWORD",
+	"timeout":300,
+	"method":"aes-256-cfb",
+	"fast_open":false,
+	"workers":1
+}
+vi /etc/default/docker，加入以上代理服务器的设置，让docker走该代理；
+export http_proxy=http://localhost:1080;
+export https_proxy=http://localhost:1080;
+测试：
+curl --proxy socks5://localhost:1080 https://twitter.com
+奇怪的是，在我家的Linux上测试成功，在阿里云上同样的sslocal配置文件和命令就测试失败，说是TLS握手失败；
+我看详细日志：我明明指定的搬瓦工的IP，之前是指定的hosts设定好的域名，却去连接别处了：
+我连google:
+connecting 69.171.224.40:443 from 127.0.0.1:49814
+twitter:
+connecting 69.171.239.11:443 from 127.0.0.1:49850
+facebook:
+connecting 31.13.79.1:443 from 127.0.0.1:49866
+看样子估计在阿里云上是被域名污染了。我换了测试curl通过这个proxy获得百度页面，正常；
+
+2018-04-12 10:16 shadowsocks服务端配置：
+{
+    "server":"0.0.0.0",
+    "server_port":3432,
+    "local_port":1080,
+    "password":"MYFAKEPASSWORD",
+    "timeout":600,
+    "method":"aes-256-cfb",
+	"fast_open":false,
+	"workers":3
+}
+
+2018-03-11 10:27 dnsmasq的cache-size，默认值是125，比较小，可以适当增大，在32位平台上，IPV6/V4一个cache项目大小是82/74字节，在64位上是94/86字节，所以如果是在路由器上面使用的话，这个值不要太大，加大到500就可以了。
+
+2018-03-11 10:46 Mac重启dnsmasq的方法：
+sudo brew services start dnsmasq
+查看这个命令是从brew info dnsmasq获得全面的简要描述的；
+
+2018-03-23 20:37 docker减小容器大小的方法：
+1.尽量减少RUN命令数量，一系列相关动作比如说安装某一个软件的系列命令最好写在一行RUN里面；
+2.类似文件系统更改的操作，最好写在一行里面；
+3.apt update之类的操作最好避免，避免不了的话，同一行RUN的末尾添加一个clean之类的操作可以削减绝大部分影响；
+
+2018-03-23 21:52
+一个最简单的Dockerfile内容例子：
+#最好在一个单独的空目录里面制作Dockerfile
+mkdir myexdkr
+cd myexdkr
+#Dockerfile默认名字Dockerfile的话，后面的docker build -t mytag:version . 末尾的.就代表默认dockerfile名字
+vi Dockerfile
+输入以下2行内容：
+FROM ubuntu
+COPY zwdown /zws
+此处注意，对于一个目录，只复制目录内部的内容包括所有下级目录和文件，目录本身不复制，所以目标绝对路径请写明相当于源目录的目录名；
+将Ubuntu的源设置为国内的源，这样安装软件会快很多
+RUN sed -i "s/archive\.ubuntu\.com/mirrors\.163\.com/g" /etc/apt/sources.list
+
+2018-03-27 11:51 替代容器链接的方法：
+创建一个docker network: docker network create zwnet
+然后每个容器都用以下方式启动，也就是指定其所属network并为其在该network指定一个alias，这样该network中的所有容器就可以用alias作为主机名字互相通信了；
+docker run -it --network zwnet --network-alias node1 ubuntu
+
+2018-03-27 14:28
+Alpine 目前Docker镜像越来越倾向于使用Alpine系统作为基础的系统镜像，Docker Hub 官方制作的镜像都在逐步支持Alpine系统。
+下面的修改以 Alpine 3.4 为例：
+# 备份原始文件
+cp /etc/apk/repositories /etc/apk/repositories.bak
+# 修改为国内镜像源
+echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /etc/apk/repositories
+
+
+
+2018-03-28 10:44
+python:
+如果是使用 requirements.txt, 需要在 requirements.txt 头部加入如下内容:
+-i http://pypi.douban.com/simple
+如果不使用 requirements.txt, 可以使用下面的命令:
+pip install -i http://pypi.douban.com/simple Flask
+全局参数设置:
+Windows 修改 %APPDATA%\pip\pip.ini
+Linux 修改 $HOME/.config/pip/pip.conf
+OSX 修改 $HOME/Library/Application Support/pip/pip.conf
+增加如下内容:
+[global]
+index-url = http://pypi.douban.com/simple
+[install]
+trusted-host = pypi.douban.com
+其中 http://pypi.douban.com/simple 可更换为其他可用镜像
+
+2018-03-28 10:57
+新版ubuntu要求使用https源，要注意。
+清华：https://pypi.tuna.tsinghua.edu.cn/simple
+阿里云：http://mirrors.aliyun.com/pypi/simple/
+中国科技大学 https://pypi.mirrors.ustc.edu.cn/simple/
+华中理工大学：http://pypi.hustunique.com/
+山东理工大学：http://pypi.sdutlinux.org/
+豆瓣：http://pypi.douban.com/simple/
+
+2018-03-28 15:34
+pip3 install shadowsocks
+vi shadowsocks.json，内容如下：
+{
+"server":"bwg",
+"server_port":1710,
+"local_port":1080,
+"password":"5338ISGN5282FLME",
+"timeout":300,
+"method":"aes-256-cfb"
+}
+启动：
+sslocal -c ~/shadowsocks.json -d start
+配置docker客户端等以localhost:1080为代理；注意这是socks5代理，除了curl和浏览器，其他大部分程序往往不支持，需要转换为http代理；
+apt install privoxy
+vi /etc/privoxy/config
+末尾添加以下几行：
+# 把 HTTP 流量转发到本机 127.0.0.1:1080 的 Shadowsocks
+forward-socks5 / 127.0.0.1:1080 .
+# 可选，默认只监听本地连接 127.0.0.1:8118
+# 可以允许局域网中的连接
+listen-address 0.0.0.0:8118
+测试一下设置好了没有：
+curl --proxy http://localhost:8118 https://twitter.com
+MAC安装方法稍有不同，而且注意在我的RMBP上ShadowSocks监听的socks5端口是1086
+brew install privoxy
+结果：
+To have launchd start privoxy now and restart at login:
+  brew services start privoxy
+Or, if you don't want/need a background service you can just run:
+  privoxy /usr/local/etc/privoxy/config
+
+2018-03-28 15:44 设置docker代理：
+mkdir -p /etc/systemd/system/docker.service.d
+touch /etc/systemd/system/docker.service.d/http-proxy.conf
+vi /etc/systemd/system/docker.service.d/http-proxy.conf 内容如下：
+[Service]
+Environment="HTTP_PROXY=http://localhost:8118/"
+如果有局域网或者国内的registry，我们还需要使用 NO_PROXY 变量声明一下，比如你可以能国内的daocloud.io放有镜像:
+[Service]
+Environment="HTTP_PROXY=http://localhost:8118/" "NO_PROXY=localhost,127.0.0.1,daocloud.io"
+systemctl daemon-reload	刷新systemd配置
+用系统命令验证环境变量加上去没:
+systemctl show --property=Environment docker
+Environment=HTTP_PROXY=http://proxy.example.com:80/
+万事俱备，重启docker，在外面的世界遨游吧:
+systemctl restart docker
+
+
 2018-04-12 09:40 今天似乎搬瓦工VPS down掉了。起先我注意到电脑翻墙有问题，然后试了试手机翻墙也有问题，由此排除了我的公司网络的问题；后来我又在阿里云香港节点新开一个实例，也发现ping不通我的搬瓦工IP，然后加上ss，登录到搬瓦工的控制面板，发现不知为何我的搬瓦工VPS被人用来大量发送垃圾邮件因此被暂停服务了；下次我得看看有多少端口是打开的，以及貌似这个没有防火墙。那我只有手工自己在系统里面用防火墙防止SMTP端口被人滥用了；
 #我的SSH端口
 ufw allow 28975
