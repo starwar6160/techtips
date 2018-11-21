@@ -1,0 +1,27 @@
+2018-11-21 16:58 Wednesday React项目开发流程：
+此处假设安装nodejs,git,TortoiseGit,WebStorm，获取源码等等环境搭建工作已经完成；
+*	运行源码：
+	*	打开一个cmd命令行窗口，cd到源码目录下，然后npm install -G cnpm(这个步骤只需要做一次，不需要每个项目都做)，cnpm能替代npm在install的时候从国内淘宝的软件源下载nodejs依赖模块，也就是node_modules目录下的一大堆模块；
+	*	cnpm install 然后耐心等待几分钟，直到其执行完毕，要求没有任何error之类的错误信息；
+	*	npm start，然后耐心等待大约半分钟，等到浏览器自动打开一个网页，就是Ant Design Pro框架项目的运行效果了；
+*	整体运作流程：
+	*	页面路由：config/router.config.js文件配置了所有的页面路由，列出了所有相对url和源码目录中的.js文件的对应关系；相对URL指的是http://hostname:port之后的部分；按照惯例，此处可以省略.js文件的扩展名，例如'./PowerPlant/PlantManage'实际上对应的是'./PowerPlant/PlantManage.js'文件；还有此处有一些惯用的默认相对路径基准，例如此处的.指代的是src/pages目录；打开网站时自动跳转到其中的默认页面路由去，点击某个链接跳转到对应的页面URL去，然后按照此处的配置执行对应的.js代码文件；
+	*	导入组件：代码文件开头是一片import，导入例如React,Dva等各种框架，各种第三方组件，ant design的各种组件，各种.css或者.less样式表文件（.less是另一种类似css但是更加高级的样式表），以及自己的代码文件中的某些变量，函数等也可以如此导入；
+	*	常量定义:const是定义各种常量，和C++类似；不过类似const FormItem = Form.Item;这种用法是ES6的独有语法，用于给某些元素提供一个简短的别名；
+	*	连接数据state:下面的@connect语句里面的plantinfo，用于把本页面的state状态和全局dva store里面树状数据结构里面该页面对应的分支联系起来，model的dispatch动作和后端REST API交互了以后，会对全局dva store产生修改，然后通过这个connect，修改反映到页面state里面，React再根据页面state的变化来渲染数据发生了变化的局部页面元素；大致上是这么一个原理，详情尚未弄很明白；
+	*	请求后端REST API数据：类似componentDidMount这样的函数，在React框架中有七八个，不过这事最常见的一个，页面组件挂载完毕时会被自动执行，一般在这里通过dispatch/dva去后端REST API获取页面数据，然后通过React的数据流和渲染机制把获取到的数据渲染到各个页面元素中供用户查看和操作；
+	*	把数据渲染到页面元素：用户的点击导致dispatch一个动作，执行modles里面对应函数，再调用api.js里面对应函数用ajax/request取得数据，放到dva全局树状store，再通过dva/connect把某一个树枝联系到具体某个页面，该页面再通过React的机制把这个页面对应的全局store的树枝重的数据渲染到自己的各个页面元素；
+	*	提交数据到后端REST API：页面所有元素的数据集合，可以通过this.props.form.getFieldsValue()函数获取，然后对每个字段的数据做一些验证，计算等处理，准备好了以后，通过dispatch动作调用models/api.js中的ajax/后端REST API这么一层层的提交数据到后端REST API并返回结果，返回值通过promise异步执行对象获取；
+	*	models层：
+		*	一般有一个本模块几个页面共用的模块级别数据区，这实际上是全局dva store树状数据结构的一个分支，实际运行的时候所有模块的models里面的数据区会被汇集到一起形成全局dva store的树状数据结构，整个数据结构都由json组成，可以比较方便的访问；
+		*	effects里面是fetch,add,remove,update等几个动作，基本对应于数据库的增删改查动作，当然要添加自己的动作也是可以的；yield call是js的异步调用语法；yield返回值是ES6语法的Promise异步执行对象，比回调函数容易理解的多；取得返回的Promise结果后（返回数据也包含在Promise对象内部）,用yield put语句将其异步发布到dva，修改dva全局store，然后触发对应数据的页面元素重新渲染，局部更新；
+		*	reducers里面是一个纯函数，用于把现有state的复制品和dispatch发布的动作以及数据三者结合，生成一个state的复制品在dispatch的动作修改完毕后的状态，并把这个状态返回，而原本的state并没有被修改，这就是纯函数的意义：不产生副作用；
+		*	一般通过dispatch发布一个动作以及附带的数据调用models层里面的动作，这实际上相当于C++里面的函数调用，不过是异步的；
+		*	该代码文件一般位于模块的models子目录中，例如"src/pages/PowerPlant/models/plantinfo.js"；
+	*	API层：models层里面的动作实际上用yield call调用的函数，来自于src/services/api.js文件；里面是一个个采用ajax访问远端REST API的函数；函数都有export async 前缀，表示导出并且是异步执行的，因为网络访问的延迟波动很大，所以需要异步执行；此处作适当修改，改动几行语句，还可以实现mock功能，用roadhogrc等mock模块，将本地写死的数据通过mock方法返回给ajax函数调用，便于前端自行测试以及单元测试；
+*	开发方法：
+	*	npm start把源码运行起来，保持该窗口不关，然后打开chrome浏览器的开发者工具，重点看console tab输出的内容，js源码中的console.log('aaa')这样的语句都输出在这里，而且这里随时可以输入js表达式和语句获得结果；明白了执行流程后，大部分调试工作都可以在合适的地方输出一两个变量的值到控制台，查看一下即可解决大部分为问题；而且不关多复杂，有多少嵌套层次的json数据，都可以简单的一句话输出到console，所以这个调试方法比较高效；
+	*	源码编辑，可以用webstorm，也可以用Visual Studio Code，或者理论上任何文本编辑器甚至vi都可以，但是还是采用前两者这样的对于js/React等语法有较好支持的IDE比较好；
+	*	编辑源码文件并存盘后，大约在3秒内，nodejs就会监测源码文件修改并将更新过的源码重新解释，刷新页面（这个行为只在dev模式，也就是开发阶段存在，运行阶段不会自动刷新页面）。有时候对于源码的改动过大，这种nodejs对于源码文件修改的热加载会出错，此时手动刷新页面即可；
+	*	各种需要的页面参考该项目已有的导航栏中给出的各种页面例子；各种页面元素组件的用法参考ant design的官方参考文档；
+	*	ES6语法建议用到的时候再看相应部分即可，这样总体开发效率比较高；

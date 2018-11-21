@@ -23,3 +23,15 @@ POST   /posts
 PUT    /posts/1
 PATCH  /posts/1
 DELETE /posts/1
+
+2018-08-27 15:55 Monday 
+# coding=utf-8
+#提交表单
+import requests
+#输入参数的值作为数组
+myData = {'num1': 100, 'num2': 727}
+#注意第二个命名参数是params
+r= requests.get("http://webn:6025/quote", params=myData)
+#打出来URL作为调试参考
+print(r.url)
+print(r.text)

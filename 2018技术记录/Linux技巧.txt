@@ -373,7 +373,7 @@ mysscfg.json内容如下：
 
 2018-04-12 14:30
 用命令随机产生比较难以破解的密码，例如:
-    head -c 512 /dev/urandom | md5sum | base64 | cut -c3-18
+    head -c 32 /dev/urandom | md5sum | base64 | cut -c3-18
 v2ray安装非常简单：
  bash <(curl -L -s https://raw.githubusercontent.com/v2ray/v2ray-core/master/release/install-release.sh)
  v2ray配置生成器：https://htfy96.github.io/v2ray-config-gen/#
