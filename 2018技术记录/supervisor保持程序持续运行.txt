@@ -1,0 +1,46 @@
+2018-07-26 10:28 安装配置supervisor实现程序持续运行：
+pip install supervisor
+mkdir supervisord_config
+cd supervisord_config/
+echo_supervisord_conf > supervisord.conf
+在supervisord.conf末尾添加
+[include]
+files = /root/supervisord_config/*.ini
+含义是该目录下所有ini都作为单独程序的配置文件，这样比较清晰，比全部写在主配置文件里面清晰；
+supervisord -c supervisord.conf 启动守护进程
+注意，配置文件里面，涉及到可执行文件可以利用搜索路径写文件名即可，但是涉及到具体哪一个配置文件必须写绝对路径，否则会找不到。
+如果遇到问题，可以检查日志：supervisorctl tail -f shadowsocks stderr
+如果修改了单个程序的配置文件，可以reread，然后restart；
+如果修改了整个daemon的配置文件，可以update，这两者都不用kill掉daemon进程然后再次执行；
+注意，一般来说没有特别需要，后台服务进程建议都以nobody用户运行，没有特权，减少潜在可能的安全风险，下面的配置文件里面的user=nobody就是指定这个的。
+两个分离的ini配置文件内容：
+[program:ss]
+command=ssserver  -c /opt/ss/shadowsocks.json
+stdout_logfile=/opt/ss/ss_stdout_log.log
+autostart=true
+autorestart=true
+startsecs=5
+priority=1
+stopasgroup=true
+killasgroup=true
+user=nobody
+
+[program:v2ray]
+command=/opt/v2ray/v2ray -config /opt/v2ray/cfgv2ray.json
+stdout_logfile=/opt/v2ray/v2ray_stdout_log.log
+autostart=true
+autorestart=true
+startsecs=5
+priority=1
+stopasgroup=true
+killasgroup=true
+user=nobody
+
+2018-12-07 11:37 Friday
+查看进程输出日志，用于诊断进程启动失败等等常见错误；
+sudo supervisorctl tail v2ray stdout
+此外查看ini里面指定的进程日志文件也是一个诊断方法；
+以下三条命令，可以做到新增配置文件的进程启动，而不重启所有其他进程。reread获取新的配置文件，update应用新的配置文件，status看看新增进程是否正常运行了；
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl status
